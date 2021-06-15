@@ -1,7 +1,7 @@
 
 #define enPin 10
 #define numMotors 3
-#define motorDelay 190
+#define motorDelay 100
 #define OFF -1
 
 int stepPin[numMotors] = {2, 4, 6};
@@ -13,7 +13,7 @@ long i;
 
 
 void setup(){
-    Serial.begin(115200);
+    Serial.begin(57600);
     pinMode(stepPin[0], OUTPUT);
     pinMode(dirPin[0], OUTPUT);
     pinMode(stepPin[1], OUTPUT);
@@ -42,12 +42,14 @@ void resetVariables(){
 
 void getSteps(){
     Serial.println("Getting steps");
-    for (int i = 0; i < numMotors; i++){
+    for (i = 0; i < numMotors; i++){
+        Serial.println("Type number of steps: ");
         while (steps[i] == OFF){
-            if (Serial.available() > 0){
+            while (Serial.available() > 0){
                 steps[i] = Serial.parseInt(SKIP_ALL, '\n');
             }
         }
+        Serial.println(steps[i]);
     }
 }
 
@@ -57,7 +59,7 @@ void getDirection(){
     for (i = 0; i < numMotors; i++){
         Serial.println("Type direction (0/1): ");
         while (dirInput[i] == OFF){
-            if (Serial.available() > 0){
+            while (Serial.available() > 0){
                 dirInput[i] = Serial.parseInt(SKIP_ALL, '\n');
             }
         }
@@ -66,7 +68,7 @@ void getDirection(){
 
 void writeDirection(int *dirPin, int *dirInput){
     Serial.println("Writing direction");
-    for (int i = 0; i < numMotors; i++){
+    for (i = 0; i < numMotors; i++){
         if (dirInput[i] == 0){
             digitalWrite(dirPin[i], LOW);
         }
@@ -85,9 +87,9 @@ void writeDirection(int *dirPin, int *dirInput){
 
 void writeSteps(int *stepPin, long *steps){
     Serial.println("Writing steps");
-    int stepCount[numMotors] = {0, 0, 0};
-    int maxLen = max3(steps[0], steps[1], steps[2]);
-    for (int i = 0; i < maxLen; i++){
+    long stepCount[numMotors] = {0, 0, 0};
+    long maxLen = max3(steps[0], steps[1], steps[2]);
+    for (i = 0; i < maxLen; i++){
         for (int j = 0; j < numMotors; j++){
             if (stepCount[j] < steps[j]){
                 stepCount[j] ++;
@@ -105,9 +107,9 @@ void writeSteps(int *stepPin, long *steps){
     }
 }
 
-int max3(int a, int b, int c)
+long max3(long a, long b, long c)
 {
-   int maxguess;
+   long maxguess;
 
    maxguess = max(a,b);  // biggest of A and B
    maxguess = max(maxguess, c);  // but maybe C is bigger?
